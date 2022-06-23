@@ -7,8 +7,13 @@ on:
   pull_request:
     branches: [ main ]
 
+permissions:
+  contents: write # needed to write releases
+  id-token: write # needed for keyless signing
+  packages: write # needed for ghcr access
+
 jobs:
-  test:
+  staging:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -41,3 +46,13 @@ jobs:
         run: make vet
       - name: Build
         run: make build
+      - name: Build
+        run: make build
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: github
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Push to staging
+        run: make push
