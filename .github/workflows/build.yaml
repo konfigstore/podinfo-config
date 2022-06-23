@@ -53,6 +53,20 @@ jobs:
           registry: ghcr.io
           username: github
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Push artifact to staging
+      - name: Push artifact
         if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
-        run: make push
+        run: |
+          flux push artifact ghcr.io/konfigstore/manifests/podinfo:$(git rev-parse --short HEAD) \
+             	--path="./deploy" \
+             	--source="$(git config --get remote.origin.url)" \
+             	--revision="$(git branch --show-current)/$(git rev-parse HEAD)"
+      - name: Sign artifact
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          COSIGN_EXPERIMENTAL: 1
+        run: |
+          cosign sign ghcr.io/konfigstore/manifests/podinfo:$(git rev-parse --short HEAD)
+      - name: Tag artifact for staging
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        run: |
+          flux tag artifact ghcr.io/konfigstore/manifests/podinfo:$(git rev-parse --short HEAD) --tag staging
