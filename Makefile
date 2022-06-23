@@ -45,14 +45,25 @@ promote:
 
 .PHONY: deploy
 deploy:
-	flux create source oci podinfo \
+	flux -n staging create source oci podinfo \
     	--url ghcr.io/konfigstore/manifests/podinfo \
     	--tag staging \
     	--interval 10m
-	flux create kustomization podinfo \
+	flux -n staging create kustomization podinfo \
 		--source=OCIRepository/podinfo \
 		--path="./deploy/staging" \
-		--prune=true \
+		--target-namespace=staging \
 		--interval=5m \
-		--target-namespace=default \
+		--prune=true \
+		--wait=true
+	flux -n production create source oci podinfo \
+    	--url ghcr.io/konfigstore/manifests/podinfo \
+    	--tag production \
+    	--interval 10m
+	flux -n production create kustomization podinfo \
+		--source=OCIRepository/podinfo \
+		--path="./deploy/production" \
+		--target-namespace=production \
+		--interval=5m \
+		--prune=true \
 		--wait=true
