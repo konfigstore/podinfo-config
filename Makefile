@@ -67,3 +67,8 @@ deploy:
 		--interval=5m \
 		--prune=true \
 		--wait=true
+
+.PHONY: sync
+sync:
+	flux -n staging reconcile kustomization podinfo --with-source
+	flux -n staging reconcile kustomization podinfo --with-source
