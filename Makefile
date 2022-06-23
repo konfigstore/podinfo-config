@@ -26,3 +26,19 @@ mod:
 	cue get go github.com/fluxcd/image-reflector-controller/api/v1beta1
 	go get -u github.com/fluxcd/image-automation-controller/api/v1beta1
 	cue get go github.com/fluxcd/image-automation-controller/api/v1beta1
+
+build:
+	mkdir -p deploy/staging
+	cue staging > ./deploy/staging/podinfo.yaml
+	mkdir -p deploy/production
+	cue production > ./deploy/production/podinfo.yaml
+
+push:
+	flux push artifact ghcr.io/konfigstore/manifests/podinfo:$$(git rev-parse --short HEAD) \
+    	--path="./deploy" \
+    	--source="$$(git config --get remote.origin.url)" \
+    	--revision="$$(git branch --show-current)/$$(git rev-parse HEAD)"
+	flux tag artifact ghcr.io/konfigstore/manifests/podinfo:$$(git rev-parse --short HEAD) --tag staging
+
+promote:
+	flux tag artifact ghcr.io/konfigstore/manifests/podinfo:staging --tag production

@@ -13,3 +13,5 @@
 
 # Dependency directories
 cue.mod/gen/
+
+deploy/
