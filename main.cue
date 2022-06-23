@@ -25,12 +25,14 @@ appStaging: podinfo.#Application & {
 			enabled:   true
 			className: "nginx"
 			host:      "podinfo.preview.internal"
+			tls:       true
+			annotations: "cert-manager.io/cluster-issuer": "letsencrypt"
 		}
 		serviceMonitor: enabled: false
 	}
 }
 
-staging: appStaging.objects
+stagingObjects: appStaging.objects
 
 appProduction: podinfo.#Application & {
 	config: {
@@ -58,4 +60,4 @@ appProduction: podinfo.#Application & {
 	}
 }
 
-production: appProduction.objects
+productionObjects: appProduction.objects

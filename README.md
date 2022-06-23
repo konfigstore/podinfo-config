@@ -7,17 +7,16 @@ The module contains a `podinfo.#Application` definition which takes `podinfo.#Co
 
 ## Prerequisites
 
-Install CUE with:
+Install Go and CUE with:
 
 ```shell
-brew install cue
+brew install go cue
 ```
 
 Generate the Kubernetes API definitions required by this module with:
 
 ```shell
-go get k8s.io/api/...
-cue get go k8s.io/api/...
+make mod
 ```
 
 ## Configuration
