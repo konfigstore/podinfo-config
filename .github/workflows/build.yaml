@@ -33,6 +33,7 @@ jobs:
         run: |
           git clone https://github.com/fluxcd/flux2.git
           cd flux2 
+          git checkout oci
           make build
           ./bin/flux -v
           mv ./bin/flux /usr/local/bin/flux
