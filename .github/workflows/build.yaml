@@ -1,0 +1,40 @@
+name: build
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Restore Go cache
+        uses: actions/cache@v1
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.18.x
+      - name: Build Flux CLI
+        run: |
+          git clone https://github.com/fluxcd/flux2.git
+          cd flux2 
+          make build
+          ./bin/flux -v
+      - name: Setup CUE
+        uses: cue-lang/setup-cue@main
+      - name: Download CUE packages
+        run: make mod
+      - name: Vet
+        run: make vet
+      - name: Build
+        run: make build

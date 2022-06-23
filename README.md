@@ -1,5 +1,8 @@
 # Podinfo CUE module
 
+[![build](https://github.com//konfigstore/podinfo-config/workflows/build/badge.svg)](https://github.com//konfigstore/podinfo-config/actions)
+[![license](https://img.shields.io/github/license//konfigstore/podinfo-config.svg)](https://github.com//konfigstore/podinfo-config/blob/main/LICENSE)
+
 This repository contains a [CUE](https://cuelang.org/docs/) module and tooling
 for generating [podinfo](https://github.com/stefanprodan/podinfo)'s Kubernetes resources.
 
