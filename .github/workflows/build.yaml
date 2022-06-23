@@ -29,7 +29,23 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: 1.18.x
+      - name: Setup CUE
+        uses: cue-lang/setup-cue@main
+      - name: Download CUE packages
+        run: make mod
+      - name: Vet
+        run: make vet
+      - name: Build
+        run: make build
+      - name: Login to GitHub Container Registry
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: github
+          password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build Flux CLI
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
         run: |
           git clone https://github.com/fluxcd/flux2.git
           cd flux2 
@@ -39,21 +55,6 @@ jobs:
           mv ./bin/flux /usr/local/bin/flux
           cd ..
           rm -rf flux2
-      - name: Setup CUE
-        uses: cue-lang/setup-cue@main
-      - name: Download CUE packages
-        run: make mod
-      - name: Vet
-        run: make vet
-      - name: Build
-        run: make build
-      - name: Build
-        run: make build
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: github
-          password: ${{ secrets.GITHUB_TOKEN }}
       - name: Push to staging
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
         run: make push
