@@ -42,3 +42,17 @@ push:
 
 promote:
 	flux tag artifact ghcr.io/konfigstore/manifests/podinfo:staging --tag production
+
+.PHONY: deploy
+deploy:
+	flux create source oci podinfo \
+    	--url ghcr.io/konfigstore/manifests/podinfo \
+    	--tag staging \
+    	--interval 10m
+	flux create kustomization podinfo \
+		--source=OCIRepository/podinfo \
+		--path="./deploy/staging" \
+		--prune=true \
+		--interval=5m \
+		--target-namespace=default \
+		--wait=true
