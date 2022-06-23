@@ -31,6 +31,8 @@ jobs:
           go-version: 1.18.x
       - name: Setup CUE
         uses: cue-lang/setup-cue@main
+      - name: Setup cosign
+        uses: sigstore/cosign-installer@main
       - name: Vet the CUE definitions
         run: make vet
       - name: Generate deploy manifests
