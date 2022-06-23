@@ -30,6 +30,9 @@ jobs:
           cd flux2 
           make build
           ./bin/flux -v
+          mv ./bin/flux /usr/local/bin/flux
+          cd ..
+          rm -rf flux2
       - name: Setup CUE
         uses: cue-lang/setup-cue@main
       - name: Download CUE packages
